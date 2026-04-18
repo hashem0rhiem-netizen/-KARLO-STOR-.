@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KARLO STORE | النسخة المطورة 2026</title>
+    <title>KARLO STORE | النسخة الاحترافية 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #0046ff; --success: #25d366; --danger: #ff4d4d; --dark: #0a0a0a; }
@@ -42,7 +42,10 @@
         .btn-k { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; font-family: 'Cairo'; margin-top: 5px; }
         .btn-next { background: var(--primary); color: white; }
         
-        .order-card { background: #111; border-right: 4px solid var(--primary); padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; text-align: right; }
+        .order-card { background: #111; border-right: 4px solid var(--primary); padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; text-align: right; border: 1px solid #222; }
+        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 5px; margin-right: 5px; }
+        .pending-bg { background: #ff9800; }
+        .done-bg { background: var(--success); }
     </style>
 </head>
 <body> 
@@ -95,10 +98,10 @@
     </div>
 
     <div id="history-sec" class="section">
-        <h3 style="text-align:center;">طلباتك الجارية ⏳</h3>
+        <h3 style="text-align:center; color: #ff9800;">طلباتك الجارية ⏳</h3>
         <div id="pending-orders-list"></div>
-        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-        <h3 style="text-align:center;">الطلبات المنتهية ✅</h3>
+        <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
+        <h3 style="text-align:center; color: var(--success);">الطلبات المنتهية ✅</h3>
         <div id="completed-orders-list"></div>
     </div>
 </div> 
@@ -173,25 +176,35 @@
             document.getElementById('headerBalance').innerText = b.toFixed(2);
         });
 
-        // متابعة المشحونات الخاصة بالمستخدم
-        const q = query(collection(db, "orders"), where("user", "==", u), orderBy("time", "desc"));
+        // متابعة المشحونات الخاصة بالمستخدم - تعديل مهم هنا لعرض الجاري والمنتهي فوراً
+        const q = query(collection(db, "orders"), where("user", "==", u));
         onSnapshot(q, s => {
             const pList = document.getElementById('pending-orders-list');
             const cList = document.getElementById('completed-orders-list');
             pList.innerHTML = ""; cList.innerHTML = "";
             
-            s.forEach(doc => {
-                const o = doc.data();
-                const date = o.time ? o.time.toDate().toLocaleString('ar-LY') : '...';
+            s.forEach(snapDoc => {
+                const o = snapDoc.data();
+                // تنسيق الوقت التاريخ
+                const date = o.time ? o.time.toDate().toLocaleString('ar-LY') : 'جاري التحديث...';
+                
                 const html = `
                     <div class="order-card">
-                        <b>📦 الباقة: ${o.name}</b><br>
+                        <span class="status-badge ${o.status === 'pending' ? 'pending-bg' : 'done-bg'}">
+                            ${o.status === 'pending' ? 'جاري التنفيذ' : 'تم الاكتمال'}
+                        </span>
+                        <b style="color:var(--primary)">${o.name}</b><br>
                         🎮 اللعبة: ${o.game} | 🆔 الأيدي: ${o.playerID}<br>
-                        💰 السعر: ${o.price} د.ل | 📅 ${date}
+                        💰 السعر: ${o.price} د.ل<br>
+                        📅 التاريخ: ${date}
                     </div>`;
+                
                 if(o.status === 'pending') pList.innerHTML += html;
                 else cList.innerHTML += html;
             });
+            
+            if(pList.innerHTML === "") pList.innerHTML = "<p style='text-align:center; opacity:0.5;'>لا توجد طلبات جارية حالياً</p>";
+            if(cList.innerHTML === "") cList.innerHTML = "<p style='text-align:center; opacity:0.5;'>سجل الطلبات فارغ</p>";
         });
     } 
 
@@ -206,7 +219,7 @@
             await addDoc(collection(db, "deposits"), { user:currentUser, amount:a, from:p, method:m, status:'pending', time:serverTimestamp() });
             document.getElementById('mTitle').innerText = "جاري التحقق.."; 
             document.getElementById('mInputContainer').innerHTML="";
-            document.getElementById('mBtn').style.display = 'none'; // إخفاء زر "متابعة" كما طلبت
+            document.getElementById('mBtn').style.display = 'none';
         };
     }; 
 
@@ -222,16 +235,25 @@
             document.getElementById('mInputContainer').innerHTML = `<input type="text" id="pID" class="k-input" placeholder="ID اللاعب">`;
             document.getElementById('mBtn').onclick = async () => {
                 const id = document.getElementById('pID').value; if(!id) return;
+                // الخصم من المحفظة وحفظ الطلب في قاعدة البيانات فوراً
                 await updateDoc(doc(db, "users", currentUser), { balance: bal - p });
-                await addDoc(collection(db, "orders"), { user:currentUser, game:g, name:n, playerID:id, price:p, status:'pending', time:serverTimestamp() });
-                document.getElementById('mTitle').innerText="تم الخصم والطلب! ✅"; 
-                document.getElementById('mInputContainer').innerHTML="";
-                document.getElementById('mBtn').style.display = 'none'; // تعديل: إخفاء الزر بعد الطلب
+                await addDoc(collection(db, "orders"), { 
+                    user:currentUser, 
+                    game:g, 
+                    name:n, 
+                    playerID:id, 
+                    price:p, 
+                    status:'pending', 
+                    time:serverTimestamp() 
+                });
+                document.getElementById('mTitle').innerText="تم إرسال طلبك! ✅"; 
+                document.getElementById('mInputContainer').innerHTML="يمكنك متابعة حالة الطلب في قسم (المشحونات)";
+                document.getElementById('mBtn').style.display = 'none';
             };
         }
     }; 
 
-    // الإدارة - إضافة الرفض
+    // الإدارة
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); b.innerHTML="";
         document.getElementById('depBadge').style.display = s.size > 0 ? 'inline' : 'none';
@@ -252,9 +274,7 @@
     };
 
     window.rejDep = async (id) => {
-        if(confirm("هل تريد رفض وحذف هذا الطلب؟")) {
-            await deleteDoc(doc(db, "deposits", id));
-        }
+        if(confirm("هل تريد رفض وحذف هذا الطلب؟")) { await deleteDoc(doc(db, "deposits", id)); }
     };
 
     onSnapshot(collection(db, "orders"), s => {
