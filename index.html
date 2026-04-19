@@ -46,6 +46,27 @@
         .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 5px; margin-right: 5px; }
         .pending-bg { background: #ff9800; }
         .done-bg { background: var(--success); }
+
+        /* الكود الجديد لزر النشر العائم */
+        .publish-fab { 
+            position: fixed; 
+            bottom: 25px; 
+            right: 25px; 
+            width: 70px; 
+            height: 70px; 
+            background: #25d366; 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-weight: 900; 
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); 
+            z-index: 3000; 
+            text-decoration: none; 
+            border: 2px solid #fff;
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 <body> 
@@ -93,9 +114,11 @@
     </div> 
 
     <div id="acc-sec" class="section">
+        <a href="https://wa.me/+218945177730?text=اريد%20نشر%20للرقم" class="publish-fab">نشر!</a>
+        
         <div id="acc-cats"><div class="category-grid" id="accCatsGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:15px;"></div></div>
         <div id="acc-items" style="display:none;"><button onclick="back('acc')" style="color:var(--primary); background:none; border:1px solid var(--primary); padding:8px 20px; border-radius:10px; margin-bottom:15px; cursor:pointer;">⬅ عودة</button><div class="grid" id="accGrid"></div></div>
-    </div>
+    </div> 
 
     <div id="history-sec" class="section">
         <h3 style="text-align:center; color: #ff9800;">طلباتك الجارية ⏳</h3>
@@ -162,7 +185,7 @@
         } else {
             await setDoc(uRef, { pass:p, balance:0 }); loginOk(u);
         }
-    };
+    }; 
 
     function loginOk(u){
         currentUser = u; 
@@ -174,9 +197,8 @@
             const b = d.data().balance || 0;
             document.getElementById('userBalance').innerText = b.toFixed(2);
             document.getElementById('headerBalance').innerText = b.toFixed(2);
-        });
+        }); 
 
-        // متابعة المشحونات الخاصة بالمستخدم - تعديل مهم هنا لعرض الجاري والمنتهي فوراً
         const q = query(collection(db, "orders"), where("user", "==", u));
         onSnapshot(q, s => {
             const pList = document.getElementById('pending-orders-list');
@@ -185,7 +207,6 @@
             
             s.forEach(snapDoc => {
                 const o = snapDoc.data();
-                // تنسيق الوقت التاريخ
                 const date = o.time ? o.time.toDate().toLocaleString('ar-LY') : 'جاري التحديث...';
                 
                 const html = `
@@ -235,7 +256,6 @@
             document.getElementById('mInputContainer').innerHTML = `<input type="text" id="pID" class="k-input" placeholder="ID اللاعب">`;
             document.getElementById('mBtn').onclick = async () => {
                 const id = document.getElementById('pID').value; if(!id) return;
-                // الخصم من المحفظة وحفظ الطلب في قاعدة البيانات فوراً
                 await updateDoc(doc(db, "users", currentUser), { balance: bal - p });
                 await addDoc(collection(db, "orders"), { 
                     user:currentUser, 
@@ -253,7 +273,6 @@
         }
     }; 
 
-    // الإدارة
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); b.innerHTML="";
         document.getElementById('depBadge').style.display = s.size > 0 ? 'inline' : 'none';
@@ -266,16 +285,16 @@
                 <button onclick="rejDep('${d.id}')" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">رفض ❌</button>
             </div>`; 
         });
-    });
+    }); 
 
     window.appDep = async (id,u,a) => {
         const r = doc(db,"users",u); const s = await getDoc(r);
         await updateDoc(r, { balance: (s.data().balance||0)+a }); await updateDoc(doc(db,"deposits",id),{status:'done'});
-    };
+    }; 
 
     window.rejDep = async (id) => {
         if(confirm("هل تريد رفض وحذف هذا الطلب؟")) { await deleteDoc(doc(db, "deposits", id)); }
-    };
+    }; 
 
     onSnapshot(collection(db, "orders"), s => {
         const cur = document.getElementById('adminOrders'), don = document.getElementById('doneOrders');
@@ -284,7 +303,7 @@
             const o = d.data(); const h = `<div style="border:1px solid #333; padding:10px; margin-bottom:5px;"><b>${o.game}</b> - ${o.name}<br>ID: ${o.playerID} | يوزر: ${o.user}<br>${o.status==='pending'?`<button onclick="appOrd('${d.id}')">تم ✅</button>`:''}</div>`;
             if(o.status==='pending') cur.innerHTML += h; else don.innerHTML += h;
         });
-    });
+    }); 
 
     window.appOrd = async id => { await updateDoc(doc(db,"orders",id),{status:'done'}); }; 
 
