@@ -6,16 +6,24 @@
     <title>KARLO STORE | النسخة الاحترافية 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0046ff; --success: #25d366; --danger: #ff4d4d; --dark: #0a0a0a; }
+        :root { --primary: #0046ff; --success: #25d366; --danger: #ff4d4d; --dark: #0a0a0a; --glass: rgba(255, 255, 255, 0.1); }
         body { font-family: 'Cairo', sans-serif; margin: 0; background-color: #000; color: white; overflow-x: hidden; }
         
         .video-background { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -2; object-fit: cover; opacity: 0.4; }
         .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0, 0, 0, 0.85); z-index: -1; } 
 
-        #balance-header { display:none; position: fixed; top: 15px; left: 15px; background: var(--success); color: white; padding: 6px 18px; border-radius: 25px; font-weight: 900; z-index: 2000; box-shadow: 0 0 15px var(--success); border: 2px solid white; animation: pulse 2s infinite; }
+        /* الهيدر وزر الخروج */
+        #top-bar { display: none; position: fixed; top: 15px; left: 15px; right: 15px; z-index: 2000; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+        #balance-header { pointer-events: auto; background: var(--success); color: white; padding: 6px 18px; border-radius: 25px; font-weight: 900; box-shadow: 0 0 15px var(--success); border: 2px solid white; animation: pulse 2s infinite; }
+        .logout-btn { pointer-events: auto; background: #1a1a1a; border: 1px solid var(--success); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: 0.3s; }
+        .logout-btn:hover { background: var(--danger); border-color: white; }
+
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } } 
 
-        #auth-screen { position: fixed; inset: 0; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        /* واجهة الدخول المطورة */
+        #auth-screen { position: fixed; inset: 0; z-index: 9999; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #001a4d 0%, #000 100%); }
+        .auth-card { width: 90%; max-width: 400px; padding: 40px 30px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .auth-card h2 { font-size: 28px; margin-bottom: 10px; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
         
         .hero-title { text-align: center; padding: 25px; font-size: 32px; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px var(--primary); }
         .nav-scroll { display: flex; justify-content: center; background: rgba(5, 10, 25, 0.95); padding: 12px; gap: 8px; position: sticky; top: 0; z-index: 1000; border-bottom: 3px solid var(--primary); flex-wrap: wrap; }
@@ -31,11 +39,17 @@
         .card img { width: 100%; height: 115px; border-radius: 15px; object-fit: cover; }
         .offer-num { position: absolute; top: 8px; left: 8px; background: var(--primary); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 1px solid white; z-index: 5; } 
 
+        /* لوحة التحكم المحسنة */
         .admin-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
         .admin-box { background: #0a0a0a; border: 1px solid #222; padding: 20px; border-radius: 20px; cursor: pointer; text-align: center; transition: 0.3s; border-bottom: 3px solid #333; }
         .admin-box:hover { border-color: var(--primary); }
-        .form-container { display: none; padding: 15px; background: #050505; border-radius: 15px; margin-top: 10px; text-align: right; max-height: 400px; overflow-y: auto; }
+        .form-container { display: none; padding: 15px; background: #050505; border-radius: 15px; margin-top: 10px; text-align: right; max-height: 400px; overflow-y: auto; border: 1px solid #333; }
         
+        /* تصميم إدارة المنتجات وطلبات الشحن */
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 10px; margin-bottom: 8px; border-right: 3px solid var(--primary); }
+        .admin-btn-group { display: flex; gap: 5px; }
+        .small-btn { padding: 4px 8px; border-radius: 5px; border: none; cursor: pointer; font-family: 'Cairo'; font-size: 11px; }
+
         .k-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; z-index: 5000; }
         .k-box { width: 88%; max-width: 380px; background: #050a1f; border: 2px solid var(--primary); border-radius: 25px; padding: 25px; text-align: center; }
         .k-input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--primary); color: white; border-radius: 12px; font-family: 'Cairo'; text-align: center; box-sizing: border-box; }
@@ -45,28 +59,9 @@
         .order-card { background: #111; border-right: 4px solid var(--primary); padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; text-align: right; border: 1px solid #222; }
         .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 5px; margin-right: 5px; }
         .pending-bg { background: #ff9800; }
-        .done-bg { background: var(--success); }
+        .done-bg { background: var(--success); } 
 
-        /* الكود الجديد لزر النشر العائم */
-        .publish-fab { 
-            position: fixed; 
-            bottom: 25px; 
-            right: 25px; 
-            width: 70px; 
-            height: 70px; 
-            background: #25d366; 
-            color: white; 
-            border-radius: 50%; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-weight: 900; 
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); 
-            z-index: 3000; 
-            text-decoration: none; 
-            border: 2px solid #fff;
-            animation: pulse 2s infinite;
-        }
+        .publish-fab { position: fixed; bottom: 25px; right: 25px; width: 70px; height: 70px; background: #25d366; color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); z-index: 3000; text-decoration: none; border: 2px solid #fff; animation: pulse 2s infinite; }
     </style>
 </head>
 <body> 
@@ -74,15 +69,18 @@
 <video autoplay loop muted playsinline class="video-background"><source src="https://assets.mixkit.co/videos/preview/mixkit-starry-night-sky-over-mountains-and-aurora-2003-large.mp4" type="video/mp4"></video>
 <div class="overlay"></div> 
 
-<div id="balance-header">🪙 <span id="headerBalance">0.00</span></div> 
+<div id="top-bar">
+    <div id="balance-header">🪙 <span id="headerBalance">0.00</span></div>
+    <div class="logout-btn" onclick="handleLogout()" title="تسجيل الخروج">🚪</div>
+</div>
 
 <div id="auth-screen">
-    <div class="k-box">
-        <h3 style="color:var(--primary)">KARLO STORE</h3>
-        <p style="font-size: 13px; color: #ccc;">سجل اليوزر والباسورد (6 خانات +)</p>
+    <div class="auth-card">
+        <h2>KARLO STORE</h2>
+        <p style="color: #aaa; margin-bottom: 25px;">مرحباً بك في عالم الاحتراف</p>
         <input type="text" id="loginUser" class="k-input" placeholder="اسم المستخدم">
         <input type="password" id="loginPass" class="k-input" placeholder="كلمة المرور">
-        <button class="btn-k btn-next" onclick="handleAuth()">دخول / تسجيل</button>
+        <button class="btn-k btn-next" style="margin-top: 15px;" onclick="handleAuth()">دخول / تسجيل جديد</button>
     </div>
 </div> 
 
@@ -115,7 +113,6 @@
 
     <div id="acc-sec" class="section">
         <a href="https://wa.me/+218945177730?text=اريد%20نشر%20للرقم" class="publish-fab">نشر!</a>
-        
         <div id="acc-cats"><div class="category-grid" id="accCatsGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:15px;"></div></div>
         <div id="acc-items" style="display:none;"><button onclick="back('acc')" style="color:var(--primary); background:none; border:1px solid var(--primary); padding:8px 20px; border-radius:10px; margin-bottom:15px; cursor:pointer;">⬅ عودة</button><div class="grid" id="accGrid"></div></div>
     </div> 
@@ -150,7 +147,7 @@
         
         <div class="admin-box" onclick="toggleF('f-done')">✅ الطلبات المنتهية<div id="f-done" class="form-container" onclick="event.stopPropagation()"><div id="doneOrders"></div></div></div>
     </div>
-    <button onclick="location.reload()" class="btn-k" style="margin-top:20px; background:#222;">خروج</button>
+    <button onclick="location.reload()" class="btn-k" style="margin-top:20px; background:#222;">خروج من الأدمن</button>
 </div> 
 
 <div id="kModal" class="k-modal">
@@ -163,7 +160,7 @@
     </div>
 </div> 
 
-<div style="position:fixed; bottom:15px; left:15px; opacity:0.2; cursor:pointer;" onclick="enterAdmin()">🔐</div> 
+<div style="position:fixed; bottom:15px; left:15px; opacity:0.2; cursor:pointer; z-index: 5000;" onclick="enterAdmin()">🔐</div> 
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -175,23 +172,52 @@
 
     let currentUser = null; let items = []; 
 
+    // فحص الدخول التلقائي
+    window.onload = () => {
+        const savedUser = localStorage.getItem('karlo_user');
+        const savedPass = localStorage.getItem('karlo_pass');
+        if(savedUser && savedPass) {
+            document.getElementById('loginUser').value = savedUser;
+            document.getElementById('loginPass').value = savedPass;
+            handleAuth();
+        }
+    };
+
     window.handleAuth = async () => {
         const u = document.getElementById('loginUser').value.trim().toLowerCase();
         const p = document.getElementById('loginPass').value.trim();
         if(u.length < 6 || p.length < 6) return alert("6 حروف على الأقل!");
+        
         const uRef = doc(db, "users", u); const snap = await getDoc(uRef);
         if(snap.exists()){
-            if(snap.data().pass === p) loginOk(u); else alert("خطأ في البيانات!");
+            if(snap.data().pass === p) {
+                saveAndLogin(u, p);
+            } else alert("خطأ في البيانات!");
         } else {
-            await setDoc(uRef, { pass:p, balance:0 }); loginOk(u);
+            await setDoc(uRef, { pass:p, balance:0 }); 
+            saveAndLogin(u, p);
         }
-    }; 
+    };
+
+    function saveAndLogin(u, p) {
+        localStorage.setItem('karlo_user', u);
+        localStorage.setItem('karlo_pass', p);
+        loginOk(u);
+    }
+
+    window.handleLogout = () => {
+        if(confirm("هل تريد تسجيل الخروج؟")) {
+            localStorage.removeItem('karlo_user');
+            localStorage.removeItem('karlo_pass');
+            location.reload();
+        }
+    };
 
     function loginOk(u){
         currentUser = u; 
         document.getElementById('auth-screen').style.display='none'; 
         document.getElementById('main-content').style.display='block';
-        document.getElementById('balance-header').style.display='block';
+        document.getElementById('top-bar').style.display='flex';
         
         onSnapshot(doc(db, "users", u), d => {
             const b = d.data().balance || 0;
@@ -204,31 +230,64 @@
             const pList = document.getElementById('pending-orders-list');
             const cList = document.getElementById('completed-orders-list');
             pList.innerHTML = ""; cList.innerHTML = "";
-            
             s.forEach(snapDoc => {
                 const o = snapDoc.data();
-                const date = o.time ? o.time.toDate().toLocaleString('ar-LY') : 'جاري التحديث...';
-                
-                const html = `
-                    <div class="order-card">
-                        <span class="status-badge ${o.status === 'pending' ? 'pending-bg' : 'done-bg'}">
-                            ${o.status === 'pending' ? 'جاري التنفيذ' : 'تم الاكتمال'}
-                        </span>
-                        <b style="color:var(--primary)">${o.name}</b><br>
-                        🎮 اللعبة: ${o.game} | 🆔 الأيدي: ${o.playerID}<br>
-                        💰 السعر: ${o.price} د.ل<br>
-                        📅 التاريخ: ${date}
-                    </div>`;
-                
-                if(o.status === 'pending') pList.innerHTML += html;
-                else cList.innerHTML += html;
+                const date = o.time ? o.time.toDate().toLocaleString('ar-LY') : 'جاري...';
+                const html = `<div class="order-card"><span class="status-badge ${o.status === 'pending' ? 'pending-bg' : 'done-bg'}">${o.status === 'pending' ? 'جاري' : 'تم'}</span><b style="color:var(--primary)">${o.name}</b><br>🎮 ${o.game} | 🆔 ${o.playerID}<br>💰 ${o.price} د.ل | 📅 ${date}</div>`;
+                if(o.status === 'pending') pList.innerHTML += html; else cList.innerHTML += html;
             });
-            
-            if(pList.innerHTML === "") pList.innerHTML = "<p style='text-align:center; opacity:0.5;'>لا توجد طلبات جارية حالياً</p>";
-            if(cList.innerHTML === "") cList.innerHTML = "<p style='text-align:center; opacity:0.5;'>سجل الطلبات فارغ</p>";
         });
     } 
 
+    // --- نظام الأدمن المحسن ---
+
+    onSnapshot(collection(db, "orders"), s => {
+        const cur = document.getElementById('adminOrders'), don = document.getElementById('doneOrders');
+        cur.innerHTML=""; don.innerHTML="";
+        s.forEach(d => {
+            const o = d.data(); 
+            const h = `
+            <div class="admin-item-row">
+                <div style="font-size:12px; text-align:right;">
+                    <b>${o.game} - ${o.name}</b><br>
+                    ID: <span style="color:var(--success)">${o.playerID}</span> | يوزر: ${o.user}
+                </div>
+                <div class="admin-btn-group">
+                    ${o.status==='pending'?`<button class="small-btn" style="background:var(--success); color:white" onclick="appOrd('${d.id}')">تم ✅</button>`:''}
+                    <button class="small-btn" style="background:var(--danger); color:white" onclick="delOrder('${d.id}')">حذف</button>
+                </div>
+            </div>`;
+            if(o.status==='pending') cur.innerHTML += h; else don.innerHTML += h;
+        });
+    });
+
+    window.delOrder = async id => { if(confirm("حذف الطلب نهائياً؟")) await deleteDoc(doc(db,"orders",id)); };
+    window.appOrd = async id => { await updateDoc(doc(db,"orders",id),{status:'done'}); }; 
+
+    onSnapshot(collection(db, "items"), snap => {
+        items = []; const sC=new Set(), aC=new Set(); 
+        const mng = document.getElementById('manageList'); mng.innerHTML="";
+        snap.forEach(d => {
+            const i = {id:d.id, ...d.data()}; items.push(i);
+            if(i.type==='game') sC.add(i.game); else aC.add(i.game);
+            mng.innerHTML += `
+            <div class="admin-item-row">
+                <span>${i.name} (${i.price} د.ل)</span>
+                <div class="admin-btn-group">
+                    <button class="small-btn" style="background:#444; color:white" onclick="editItemPrompt('${d.id}', ${i.price})">تعديل</button>
+                    <button class="small-btn" style="background:var(--danger); color:white" onclick="delItem('${d.id}')">حذف</button>
+                </div>
+            </div>`;
+        });
+        renderCats('shipCatsGrid', Array.from(sC), 'ship'); renderCats('accCatsGrid', Array.from(aC), 'acc');
+    });
+
+    window.editItemPrompt = async (id, oldP) => {
+        const newP = prompt("السعر الجديد:", oldP);
+        if(newP) await updateDoc(doc(db, "items", id), { price: parseFloat(newP) });
+    };
+
+    // (بقية الدوال الأساسية تبقى كما هي للعمل مع النظام)
     window.reqDeposit = (m, t) => {
         const mod = document.getElementById('kModal'); mod.style.display='flex';
         document.getElementById('mTitle').innerText = "شحن " + m;
@@ -238,11 +297,9 @@
             const a = parseFloat(document.getElementById('dA').value); const p = document.getElementById('dP').value;
             if(!a || !p) return;
             await addDoc(collection(db, "deposits"), { user:currentUser, amount:a, from:p, method:m, status:'pending', time:serverTimestamp() });
-            document.getElementById('mTitle').innerText = "جاري التحقق.."; 
-            document.getElementById('mInputContainer').innerHTML="";
-            document.getElementById('mBtn').style.display = 'none';
+            closeKModal(); alert("تم إرسال طلب الشحن");
         };
-    }; 
+    };
 
     window.startFlow = async (g, n, p) => {
         const uD = await getDoc(doc(db, "users", currentUser)); const bal = uD.data().balance;
@@ -257,75 +314,34 @@
             document.getElementById('mBtn').onclick = async () => {
                 const id = document.getElementById('pID').value; if(!id) return;
                 await updateDoc(doc(db, "users", currentUser), { balance: bal - p });
-                await addDoc(collection(db, "orders"), { 
-                    user:currentUser, 
-                    game:g, 
-                    name:n, 
-                    playerID:id, 
-                    price:p, 
-                    status:'pending', 
-                    time:serverTimestamp() 
-                });
-                document.getElementById('mTitle').innerText="تم إرسال طلبك! ✅"; 
-                document.getElementById('mInputContainer').innerHTML="يمكنك متابعة حالة الطلب في قسم (المشحونات)";
-                document.getElementById('mBtn').style.display = 'none';
+                await addDoc(collection(db, "orders"), { user:currentUser, game:g, name:n, playerID:id, price:p, status:'pending', time:serverTimestamp() });
+                closeKModal(); alert("تم إرسال طلبك بنجاح!");
             };
         }
-    }; 
+    };
 
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); b.innerHTML="";
         document.getElementById('depBadge').style.display = s.size > 0 ? 'inline' : 'none';
         s.forEach(d => { 
             const o = d.data(); 
-            b.innerHTML += `
-            <div style="border:1px solid #333; padding:10px; margin-bottom:5px;">
-                ${o.user} (${o.amount} د.ل) من: ${o.from}<br>
-                <button onclick="appDep('${d.id}','${o.user}',${o.amount})" style="background:var(--success); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">موافقة ✅</button>
-                <button onclick="rejDep('${d.id}')" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">رفض ❌</button>
-            </div>`; 
+            b.innerHTML += `<div class="admin-item-row"><span>${o.user} (${o.amount} د.ل)</span><div class="admin-btn-group"><button class="small-btn" style="background:var(--success); color:white" onclick="appDep('${d.id}','${o.user}',${o.amount})">موافقة</button><button class="small-btn" style="background:var(--danger); color:white" onclick="rejDep('${d.id}')">رفض</button></div></div>`; 
         });
-    }); 
+    });
 
     window.appDep = async (id,u,a) => {
         const r = doc(db,"users",u); const s = await getDoc(r);
         await updateDoc(r, { balance: (s.data().balance||0)+a }); await updateDoc(doc(db,"deposits",id),{status:'done'});
-    }; 
-
-    window.rejDep = async (id) => {
-        if(confirm("هل تريد رفض وحذف هذا الطلب؟")) { await deleteDoc(doc(db, "deposits", id)); }
-    }; 
-
-    onSnapshot(collection(db, "orders"), s => {
-        const cur = document.getElementById('adminOrders'), don = document.getElementById('doneOrders');
-        cur.innerHTML=""; don.innerHTML="";
-        s.forEach(d => {
-            const o = d.data(); const h = `<div style="border:1px solid #333; padding:10px; margin-bottom:5px;"><b>${o.game}</b> - ${o.name}<br>ID: ${o.playerID} | يوزر: ${o.user}<br>${o.status==='pending'?`<button onclick="appOrd('${d.id}')">تم ✅</button>`:''}</div>`;
-            if(o.status==='pending') cur.innerHTML += h; else don.innerHTML += h;
-        });
-    }); 
-
-    window.appOrd = async id => { await updateDoc(doc(db,"orders",id),{status:'done'}); }; 
-
+    };
+    window.rejDep = async (id) => { if(confirm("رفض؟")) await deleteDoc(doc(db, "deposits", id)); };
     window.upload = async (t) => {
         const s = t==='game'?'1':'2';
         const g = document.getElementById('g'+s).value, n = document.getElementById('n'+s).value, p = document.getElementById('p'+s).value, i = document.getElementById('i'+s).files[0];
         if(!g || !n || !p || !i) return alert("أكمل البيانات");
         const r = new FileReader(); r.readAsDataURL(i);
-        r.onload = async () => { await addDoc(collection(db, "items"), { game:g, name:n, price:p, type:t, img:r.result }); alert("تم!"); };
-    }; 
-
-    onSnapshot(collection(db, "items"), snap => {
-        items = []; const sC=new Set(), aC=new Set(); const mng = document.getElementById('manageList'); mng.innerHTML="";
-        snap.forEach(d => {
-            const i = {id:d.id, ...d.data()}; items.push(i);
-            if(i.type==='game') sC.add(i.game); else aC.add(i.game);
-            mng.innerHTML += `<div style="font-size:12px;">${i.name} - ${i.price} د.ل <button onclick="delItem('${d.id}')" style="color:red">حذف</button></div>`;
-        });
-        renderCats('shipCatsGrid', Array.from(sC), 'ship'); renderCats('accCatsGrid', Array.from(aC), 'acc');
-    });
-    window.delItem = async id => { if(confirm("حذف؟")) await deleteDoc(doc(db,"items",id)); }; 
-
+        r.onload = async () => { await addDoc(collection(db, "items"), { game:g, name:n, price:parseFloat(p), type:t, img:r.result }); alert("تم النشر!"); };
+    };
+    window.delItem = async id => { if(confirm("حذف المنتج؟")) await deleteDoc(doc(db,"items",id)); }; 
     function renderCats(id, cats, m) {
         const g = document.getElementById(id); g.innerHTML = "";
         cats.forEach(c => { g.innerHTML += `<div class="admin-box" style="padding:15px; background:rgba(0,40,100,0.5)" onclick="openG('${c}','${m}')">${c}</div>`; });
@@ -350,7 +366,11 @@
     function back(m) { document.getElementById(m+'-items').style.display="none"; document.getElementById(m+'-cats').style.display="block"; }
     function closeKModal() { document.getElementById('kModal').style.display = 'none'; document.getElementById('mBtn').style.display='block'; }
     function toggleF(id) { const f = document.getElementById(id); const isV = f.style.display === 'block'; document.querySelectorAll('.form-container').forEach(el => el.style.display = 'none'); f.style.display = isV ? 'none' : 'block'; }
-    function enterAdmin() { if(prompt("الرمز:") === 'KARL-STORE-2026-ULTRA99') { document.getElementById('main-content').style.display='none'; document.getElementById('admin-sec').classList.add('active'); document.getElementById('balance-header').style.display='none'; } }
+    function enterAdmin() { if(prompt("الرمز:") === 'KARL-STORE-2026-ULTRA99') { 
+        document.getElementById('main-content').style.display='none'; 
+        document.getElementById('admin-sec').classList.add('active'); 
+        document.getElementById('top-bar').style.display='none'; 
+    } }
 </script> 
 
 </body>
