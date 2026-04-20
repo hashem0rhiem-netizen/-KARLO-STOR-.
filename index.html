@@ -16,7 +16,7 @@
         #top-bar { display: none; position: fixed; top: 15px; left: 15px; right: 15px; z-index: 2000; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
         #balance-header { pointer-events: auto; background: var(--success); color: white; padding: 6px 18px; border-radius: 25px; font-weight: 900; box-shadow: 0 0 15px var(--success); border: 2px solid white; animation: pulse 2s infinite; }
         .logout-btn { pointer-events: auto; background: #1a1a1a; border: 1px solid var(--success); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: 0.3s; }
-        .logout-btn:hover { background: var(--danger); border-color: white; }
+        .logout-btn:hover { background: var(--danger); border-color: white; } 
 
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } } 
 
@@ -48,7 +48,7 @@
         /* تصميم إدارة المنتجات وطلبات الشحن */
         .admin-item-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 10px; margin-bottom: 8px; border-right: 3px solid var(--primary); }
         .admin-btn-group { display: flex; gap: 5px; }
-        .small-btn { padding: 4px 8px; border-radius: 5px; border: none; cursor: pointer; font-family: 'Cairo'; font-size: 11px; }
+        .small-btn { padding: 4px 8px; border-radius: 5px; border: none; cursor: pointer; font-family: 'Cairo'; font-size: 11px; } 
 
         .k-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; z-index: 5000; }
         .k-box { width: 88%; max-width: 380px; background: #050a1f; border: 2px solid var(--primary); border-radius: 25px; padding: 25px; text-align: center; }
@@ -72,7 +72,7 @@
 <div id="top-bar">
     <div id="balance-header">🪙 <span id="headerBalance">0.00</span></div>
     <div class="logout-btn" onclick="handleLogout()" title="تسجيل الخروج">🚪</div>
-</div>
+</div> 
 
 <div id="auth-screen">
     <div class="auth-card">
@@ -91,6 +91,7 @@
         <button class="tab-btn active" onclick="showTab('ship-sec', this)">⚡ الشحن</button>
         <button class="tab-btn" onclick="showTab('acc-sec', this)">👤 الحسابات</button>
         <button class="tab-btn" onclick="showTab('history-sec', this)">📃 المشحونات</button>
+        <button class="tab-btn" onclick="showTab('support-sec', this)">⚙️ الدعم الفني</button>
     </div> 
 
     <div id="wallet-sec" class="section">
@@ -112,7 +113,7 @@
     </div> 
 
     <div id="acc-sec" class="section">
-        <a href="https://wa.me/+218945177730?text=اريد%20نشر%20للرقم" class="publish-fab">نشر!</a>
+        <a href="https://wa.me/+218934551020?text=اريد%20نشر%20للرقم" class="publish-fab">نشر!</a>
         <div id="acc-cats"><div class="category-grid" id="accCatsGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:15px;"></div></div>
         <div id="acc-items" style="display:none;"><button onclick="back('acc')" style="color:var(--primary); background:none; border:1px solid var(--primary); padding:8px 20px; border-radius:10px; margin-bottom:15px; cursor:pointer;">⬅ عودة</button><div class="grid" id="accGrid"></div></div>
     </div> 
@@ -123,6 +124,20 @@
         <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
         <h3 style="text-align:center; color: var(--success);">الطلبات المنتهية ✅</h3>
         <div id="completed-orders-list"></div>
+    </div>
+
+    <div id="support-sec" class="section">
+        <h3 style="text-align:center; color: var(--primary);">مركز الدعم الفني ⚙️</h3>
+        <div class="grid" style="margin-top: 30px;">
+            <div class="card" onclick="window.open('https://wa.me/+218934551020', '_blank')" style="cursor: pointer; border-bottom: 4px solid #25d366;">
+                <h4 style="color:#25d366;">واتساب الدعم</h4>
+                <p>تواصل معنا عبر واتساب</p>
+            </div>
+            <div class="card" onclick="window.open('https://wa.me/+218934551020', '_blank')" style="cursor: pointer; border-bottom: 4px solid #128c7e;">
+                <h4 style="color:#128c7e;">واتساب الأعمال</h4>
+                <p>خدمة العملاء والشركات</p>
+            </div>
+        </div>
     </div>
 </div> 
 
@@ -181,7 +196,7 @@
             document.getElementById('loginPass').value = savedPass;
             handleAuth();
         }
-    };
+    }; 
 
     window.handleAuth = async () => {
         const u = document.getElementById('loginUser').value.trim().toLowerCase();
@@ -197,13 +212,13 @@
             await setDoc(uRef, { pass:p, balance:0 }); 
             saveAndLogin(u, p);
         }
-    };
+    }; 
 
     function saveAndLogin(u, p) {
         localStorage.setItem('karlo_user', u);
         localStorage.setItem('karlo_pass', p);
         loginOk(u);
-    }
+    } 
 
     window.handleLogout = () => {
         if(confirm("هل تريد تسجيل الخروج؟")) {
@@ -211,7 +226,7 @@
             localStorage.removeItem('karlo_pass');
             location.reload();
         }
-    };
+    }; 
 
     function loginOk(u){
         currentUser = u; 
@@ -239,7 +254,7 @@
         });
     } 
 
-    // --- نظام الأدمن المحسن ---
+    // --- نظام الأدمن المحسن --- 
 
     onSnapshot(collection(db, "orders"), s => {
         const cur = document.getElementById('adminOrders'), don = document.getElementById('doneOrders');
@@ -259,7 +274,7 @@
             </div>`;
             if(o.status==='pending') cur.innerHTML += h; else don.innerHTML += h;
         });
-    });
+    }); 
 
     window.delOrder = async id => { if(confirm("حذف الطلب نهائياً؟")) await deleteDoc(doc(db,"orders",id)); };
     window.appOrd = async id => { await updateDoc(doc(db,"orders",id),{status:'done'}); }; 
@@ -280,12 +295,12 @@
             </div>`;
         });
         renderCats('shipCatsGrid', Array.from(sC), 'ship'); renderCats('accCatsGrid', Array.from(aC), 'acc');
-    });
+    }); 
 
     window.editItemPrompt = async (id, oldP) => {
         const newP = prompt("السعر الجديد:", oldP);
         if(newP) await updateDoc(doc(db, "items", id), { price: parseFloat(newP) });
-    };
+    }; 
 
     // (بقية الدوال الأساسية تبقى كما هي للعمل مع النظام)
     window.reqDeposit = (m, t) => {
@@ -299,7 +314,7 @@
             await addDoc(collection(db, "deposits"), { user:currentUser, amount:a, from:p, method:m, status:'pending', time:serverTimestamp() });
             closeKModal(); alert("تم إرسال طلب الشحن");
         };
-    };
+    }; 
 
     window.startFlow = async (g, n, p) => {
         const uD = await getDoc(doc(db, "users", currentUser)); const bal = uD.data().balance;
@@ -318,7 +333,7 @@
                 closeKModal(); alert("تم إرسال طلبك بنجاح!");
             };
         }
-    };
+    }; 
 
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); b.innerHTML="";
@@ -327,7 +342,7 @@
             const o = d.data(); 
             b.innerHTML += `<div class="admin-item-row"><span>${o.user} (${o.amount} د.ل)</span><div class="admin-btn-group"><button class="small-btn" style="background:var(--success); color:white" onclick="appDep('${d.id}','${o.user}',${o.amount})">موافقة</button><button class="small-btn" style="background:var(--danger); color:white" onclick="rejDep('${d.id}')">رفض</button></div></div>`; 
         });
-    });
+    }); 
 
     window.appDep = async (id,u,a) => {
         const r = doc(db,"users",u); const s = await getDoc(r);
@@ -354,7 +369,7 @@
             gr.innerHTML += `<div class="card"><div class="offer-num">${c++}</div><img src="${i.img}"><h4>${i.name}</h4><b>${i.price} د.ل</b><button class="btn-k btn-next" onclick="${act}">طلب</button></div>`;
         });
     };
-    window.contactWhatsApp = (n, p) => { window.open(`https://wa.me/218934551020?text=أريد شراء: ${n} بسعر ${p}`, '_blank'); };
+    window.contactWhatsApp = (n, p) => { window.open(`https://wa.me/+218934551020?text=أريد شراء: ${n} بسعر ${p}`, '_blank'); };
 </script> 
 
 <script>
