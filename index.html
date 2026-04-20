@@ -96,6 +96,26 @@
             100% { width: 100%; }
         }
 
+        /* ستايل لودر الزر */
+        .btn-spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading .btn-spinner { display: inline-block; }
+        .loading .btn-text { display: none; }
+
         /* ---------------------------------- */
         
         /* طبقة الخلفية الديناميكية */
@@ -414,6 +434,9 @@
             cursor: pointer; 
             font-family: 'Cairo'; 
             margin-top: 5px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
         } 
 
         .btn-next { 
@@ -497,7 +520,10 @@
         <p style="color: #aaa; margin-bottom: 25px;">مرحباً بك في عالم الاحتراف</p>
         <input type="text" id="loginUser" class="k-input" placeholder="اسم المستخدم">
         <input type="password" id="loginPass" class="k-input" placeholder="كلمة المرور">
-        <button class="btn-k btn-next" style="margin-top: 15px;" onclick="handleAuth()">دخول / تسجيل جديد</button>
+        <button id="loginBtn" class="btn-k btn-next" style="margin-top: 15px;" onclick="handleAuth()">
+            <span class="btn-spinner"></span>
+            <span class="btn-text">دخول / تسجيل جديد</span>
+        </button>
         <p style="color: #ff4d4d; font-size: 11px; margin-top: 15px; font-weight: bold;">{لتسجيل الدخول اكتب اكتر من 6 كلمات لي اسم المستخدم و كلمة المرور واستمتع يا وحش ‼️ }</p>
     </div>
 </div> 
@@ -650,7 +676,6 @@
     let items = []; 
 
     window.onload = () => {
-        // إدارة إخفاء شاشة التحميل بعد 3 ثوانٍ
         setTimeout(() => {
             const loader = document.getElementById('loader-wrapper');
             loader.style.opacity = '0';
@@ -677,24 +702,37 @@
     window.handleAuth = async () => {
         const u = document.getElementById('loginUser').value.trim().toLowerCase();
         const p = document.getElementById('loginPass').value.trim();
+        const btn = document.getElementById('loginBtn');
         
         if(u.length < 6 || p.length < 6) {
             return alert("6 رموز على الأقل لاسم المستخدم وكلمة المرور!");
         }
+
+        // تفعيل وضع التحميل
+        btn.classList.add('loading');
+        btn.disabled = true;
         
         const uRef = doc(db, "users", u); 
-        const snap = await getDoc(uRef);
-        
-        if(snap.exists()){
-            if(snap.data().pass === p) {
-                saveAndLogin(u, p);
+        try {
+            const snap = await getDoc(uRef);
+            
+            if(snap.exists()){
+                if(snap.data().pass === p) {
+                    saveAndLogin(u, p);
+                } else {
+                    alert("بيانات الدخول غير صحيحة!");
+                    localStorage.clear();
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                }
             } else {
-                alert("بيانات الدخول غير صحيحة!");
-                localStorage.clear();
+                await setDoc(uRef, { pass:p, balance:0 }); 
+                saveAndLogin(u, p);
             }
-        } else {
-            await setDoc(uRef, { pass:p, balance:0 }); 
-            saveAndLogin(u, p);
+        } catch (e) {
+            alert("حدث خطأ في الاتصال!");
+            btn.classList.remove('loading');
+            btn.disabled = false;
         }
     }; 
 
@@ -713,6 +751,7 @@
 
     function loginOk(u){
         currentUser = u; 
+        // انتقال لحظي
         document.getElementById('auth-screen').style.display='none'; 
         document.getElementById('main-content').style.display='block';
         document.getElementById('top-bar').style.display='flex';
