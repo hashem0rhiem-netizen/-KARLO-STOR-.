@@ -45,6 +45,7 @@
         .admin-box:hover { border-color: var(--primary); }
         .form-container { display: none; padding: 15px; background: #050505; border-radius: 15px; margin-top: 10px; text-align: right; max-height: 400px; overflow-y: auto; border: 1px solid #333; }
         
+        /* تصميم إدارة المنتجات وطلبات الشحن */
         .admin-item-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 10px; margin-bottom: 8px; border-right: 3px solid var(--primary); }
         .admin-btn-group { display: flex; gap: 5px; }
         .small-btn { padding: 4px 8px; border-radius: 5px; border: none; cursor: pointer; font-family: 'Cairo'; font-size: 11px; } 
@@ -80,9 +81,6 @@
         <input type="text" id="loginUser" class="k-input" placeholder="اسم المستخدم">
         <input type="password" id="loginPass" class="k-input" placeholder="كلمة المرور">
         <button class="btn-k btn-next" style="margin-top: 15px;" onclick="handleAuth()">دخول / تسجيل جديد</button>
-        <p style="color: #ff4d4d; font-size: 11px; margin-top: 15px; font-weight: bold; line-height: 1.5;">
-            {لتسجيل الدخول اكتب اكتر من 6 كلمات لي اسم المستخدم و كلمة المرور واستمتع يا وحش ‼️ }
-        </p>
     </div>
 </div> 
 
@@ -126,7 +124,7 @@
         <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
         <h3 style="text-align:center; color: var(--success);">الطلبات المنتهية ✅</h3>
         <div id="completed-orders-list"></div>
-    </div> 
+    </div>
 
     <div id="support-sec" class="section">
         <h3 style="text-align:center; color: var(--primary);">مركز الدعم الفني ⚙️</h3>
@@ -189,6 +187,7 @@
 
     let currentUser = null; let items = []; 
 
+    // فحص الدخول التلقائي
     window.onload = () => {
         const savedUser = localStorage.getItem('karlo_user');
         const savedPass = localStorage.getItem('karlo_pass');
@@ -204,12 +203,6 @@
         const p = document.getElementById('loginPass').value.trim();
         if(u.length < 6 || p.length < 6) return alert("6 حروف على الأقل!");
         
-        // التحقق السريع من التخزين المحلي للدخول الفوري
-        if(localStorage.getItem('karlo_user') === u && localStorage.getItem('karlo_pass') === p) {
-            loginOk(u);
-            return;
-        }
-
         const uRef = doc(db, "users", u); const snap = await getDoc(uRef);
         if(snap.exists()){
             if(snap.data().pass === p) {
@@ -242,11 +235,9 @@
         document.getElementById('top-bar').style.display='flex';
         
         onSnapshot(doc(db, "users", u), d => {
-            if(d.exists()) {
-                const b = d.data().balance || 0;
-                document.getElementById('userBalance').innerText = b.toFixed(2);
-                document.getElementById('headerBalance').innerText = b.toFixed(2);
-            }
+            const b = d.data().balance || 0;
+            document.getElementById('userBalance').innerText = b.toFixed(2);
+            document.getElementById('headerBalance').innerText = b.toFixed(2);
         }); 
 
         const q = query(collection(db, "orders"), where("user", "==", u));
@@ -267,7 +258,6 @@
 
     onSnapshot(collection(db, "orders"), s => {
         const cur = document.getElementById('adminOrders'), don = document.getElementById('doneOrders');
-        if(!cur) return;
         cur.innerHTML=""; don.innerHTML="";
         s.forEach(d => {
             const o = d.data(); 
@@ -291,11 +281,11 @@
 
     onSnapshot(collection(db, "items"), snap => {
         items = []; const sC=new Set(), aC=new Set(); 
-        const mng = document.getElementById('manageList'); if(mng) mng.innerHTML="";
+        const mng = document.getElementById('manageList'); mng.innerHTML="";
         snap.forEach(d => {
             const i = {id:d.id, ...d.data()}; items.push(i);
             if(i.type==='game') sC.add(i.game); else aC.add(i.game);
-            if(mng) mng.innerHTML += `
+            mng.innerHTML += `
             <div class="admin-item-row">
                 <span>${i.name} (${i.price} د.ل)</span>
                 <div class="admin-btn-group">
@@ -312,6 +302,7 @@
         if(newP) await updateDoc(doc(db, "items", id), { price: parseFloat(newP) });
     }; 
 
+    // (بقية الدوال الأساسية تبقى كما هي للعمل مع النظام)
     window.reqDeposit = (m, t) => {
         const mod = document.getElementById('kModal'); mod.style.display='flex';
         document.getElementById('mTitle').innerText = "شحن " + m;
@@ -345,8 +336,7 @@
     }; 
 
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
-        const b = document.getElementById('depositReqs'); if(!b) return;
-        b.innerHTML="";
+        const b = document.getElementById('depositReqs'); b.innerHTML="";
         document.getElementById('depBadge').style.display = s.size > 0 ? 'inline' : 'none';
         s.forEach(d => { 
             const o = d.data(); 
@@ -367,10 +357,8 @@
         r.onload = async () => { await addDoc(collection(db, "items"), { game:g, name:n, price:parseFloat(p), type:t, img:r.result }); alert("تم النشر!"); };
     };
     window.delItem = async id => { if(confirm("حذف المنتج؟")) await deleteDoc(doc(db,"items",id)); }; 
-    
     function renderCats(id, cats, m) {
-        const g = document.getElementById(id); if(!g) return;
-        g.innerHTML = "";
+        const g = document.getElementById(id); g.innerHTML = "";
         cats.forEach(c => { g.innerHTML += `<div class="admin-box" style="padding:15px; background:rgba(0,40,100,0.5)" onclick="openG('${c}','${m}')">${c}</div>`; });
     }
     window.openG = (g, m) => {
