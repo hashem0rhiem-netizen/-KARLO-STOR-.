@@ -21,6 +21,82 @@
             color: white; 
             overflow-x: hidden; 
         }
+
+        /* --- شاشة التحميل (القطة/اللوجو) --- */
+        #loader-wrapper {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-cat {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        /* تصميم القطة المتحركة بالـ CSS */
+        .cat-head {
+            width: 80px; height: 60px;
+            background: var(--primary);
+            border-radius: 50% 50% 40% 40%;
+            position: absolute; bottom: 0; left: 20px;
+            box-shadow: 0 0 20px var(--primary);
+        }
+        .ear {
+            width: 0; height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid var(--primary);
+            position: absolute; top: -15px;
+        }
+        .ear.left { left: 5px; transform: rotate(-20deg); }
+        .ear.right { right: 5px; transform: rotate(20deg); }
+        
+        .eye {
+            width: 10px; height: 10px;
+            background: white; border-radius: 50%;
+            position: absolute; top: 20px;
+            animation: blink 2s infinite;
+        }
+        .eye.left { left: 20px; }
+        .eye.right { right: 20px; }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: loadProgress 3s forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        /* ---------------------------------- */
         
         /* طبقة الخلفية الديناميكية */
         #dynamic-bg { 
@@ -31,7 +107,7 @@
             background-position: center; 
             background-repeat: no-repeat; 
             transition: 0.8s; 
-        }
+        } 
 
         .video-background { 
             position: fixed; 
@@ -42,7 +118,7 @@
             z-index: -2; 
             object-fit: cover; 
             opacity: 0.4; 
-        }
+        } 
 
         .overlay { 
             position: fixed; 
@@ -66,7 +142,7 @@
             justify-content: space-between; 
             align-items: center; 
             pointer-events: none; 
-        }
+        } 
 
         #balance-header { 
             pointer-events: auto; 
@@ -78,7 +154,7 @@
             box-shadow: 0 0 15px var(--success); 
             border: 2px solid white; 
             animation: pulse 2s infinite; 
-        }
+        } 
 
         .logout-btn { 
             pointer-events: auto; 
@@ -94,7 +170,7 @@
             cursor: pointer; 
             font-size: 20px; 
             transition: 0.3s; 
-        }
+        } 
 
         .logout-btn:hover { 
             background: var(--danger); 
@@ -111,12 +187,12 @@
         #auth-screen { 
             position: fixed; 
             inset: 0; 
-            z-index: 9999; 
+            z-index: 999; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             background: radial-gradient(circle, #001a4d 0%, #000 100%); 
-        }
+        } 
 
         .auth-card { 
             width: 90%; 
@@ -128,7 +204,7 @@
             border: 1px solid rgba(255,255,255,0.1); 
             text-align: center; 
             box-shadow: 0 25px 50px rgba(0,0,0,0.5); 
-        }
+        } 
 
         .auth-card h2 { 
             font-size: 28px; 
@@ -145,7 +221,7 @@
             font-weight: 900; 
             color: var(--primary); 
             text-shadow: 0 0 15px var(--primary); 
-        }
+        } 
 
         .nav-scroll { 
             display: flex; 
@@ -158,7 +234,7 @@
             z-index: 1000; 
             border-bottom: 3px solid var(--primary); 
             flex-wrap: wrap; 
-        }
+        } 
 
         .tab-btn { 
             background: #111; 
@@ -171,7 +247,7 @@
             transition: 0.3s; 
             font-family: 'Cairo'; 
             font-size: 13px; 
-        }
+        } 
 
         .tab-btn.active { 
             background: var(--primary); 
@@ -184,7 +260,7 @@
             padding: 20px; 
             max-width: 1000px; 
             margin: auto; 
-        }
+        } 
 
         .section.active { 
             display: block; 
@@ -196,13 +272,13 @@
             border-radius: 25px; 
             text-align: center; 
             margin-bottom: 25px; 
-        }
+        } 
 
         .grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); 
             gap: 15px; 
-        }
+        } 
 
         .card { 
             background: rgba(10, 10, 10, 0.8); 
@@ -212,14 +288,14 @@
             text-align: center; 
             border-bottom: 4px solid var(--primary); 
             position: relative; 
-        }
+        } 
 
         .card img { 
             width: 100%; 
             height: 115px; 
             border-radius: 15px; 
             object-fit: cover; 
-        }
+        } 
 
         .offer-num { 
             position: absolute; 
@@ -242,7 +318,7 @@
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 15px; 
-        }
+        } 
 
         .admin-box { 
             background: #0a0a0a; 
@@ -253,11 +329,11 @@
             text-align: center; 
             transition: 0.3s; 
             border-bottom: 3px solid #333; 
-        }
+        } 
 
         .admin-box:hover { 
             border-color: var(--primary); 
-        }
+        } 
 
         .form-container { 
             display: none; 
@@ -280,12 +356,12 @@
             border-radius: 10px; 
             margin-bottom: 8px; 
             border-right: 3px solid var(--primary); 
-        }
+        } 
 
         .admin-btn-group { 
             display: flex; 
             gap: 5px; 
-        }
+        } 
 
         .small-btn { 
             padding: 4px 8px; 
@@ -304,7 +380,7 @@
             justify-content: center; 
             align-items: center; 
             z-index: 5000; 
-        }
+        } 
 
         .k-box { 
             width: 88%; 
@@ -314,7 +390,7 @@
             border-radius: 25px; 
             padding: 25px; 
             text-align: center; 
-        }
+        } 
 
         .k-input { 
             width: 100%; 
@@ -327,7 +403,7 @@
             font-family: 'Cairo'; 
             text-align: center; 
             box-sizing: border-box; 
-        }
+        } 
 
         .btn-k { 
             width: 100%; 
@@ -338,7 +414,7 @@
             cursor: pointer; 
             font-family: 'Cairo'; 
             margin-top: 5px; 
-        }
+        } 
 
         .btn-next { 
             background: var(--primary); 
@@ -354,14 +430,14 @@
             font-size: 13px; 
             text-align: right; 
             border: 1px solid #222; 
-        }
+        } 
 
         .status-badge { 
             font-size: 10px; 
             padding: 2px 6px; 
             border-radius: 5px; 
             margin-right: 5px; 
-        }
+        } 
 
         .pending-bg { background: #ff9800; }
         .done-bg { background: var(--success); } 
@@ -388,6 +464,21 @@
     </style>
 </head>
 <body> 
+
+<div id="loader-wrapper">
+    <div class="loader-cat">
+        <div class="ear left"></div>
+        <div class="ear right"></div>
+        <div class="cat-head">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+        </div>
+    </div>
+    <div class="loading-bar">
+        <div class="loading-progress"></div>
+    </div>
+    <p style="margin-top: 15px; color: var(--primary); font-weight: bold; letter-spacing: 1px;">KARLO STORE IS LOADING...</p>
+</div>
 
 <div id="dynamic-bg"></div>
 <video autoplay loop muted playsinline class="video-background">
@@ -484,7 +575,7 @@
         <div class="admin-box" onclick="document.getElementById('bgInput').click()">
             🖼️ تعديل خلفية المتجر
             <input type="file" id="bgInput" hidden accept="image/*" onchange="uploadBg(this)">
-        </div>
+        </div> 
 
         <div class="admin-box" onclick="toggleF('f-wal')">
             📬 موافقات المحفظة <span id="depBadge" style="background:red; border-radius:50%; padding:2px 7px; font-size:10px; display:none;">!</span>
@@ -558,18 +649,23 @@
     let currentUser = null; 
     let items = []; 
 
-    // إصلاح مشكلة الدخول والتعليق
     window.onload = () => {
+        // إدارة إخفاء شاشة التحميل بعد 3 ثوانٍ
+        setTimeout(() => {
+            const loader = document.getElementById('loader-wrapper');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+        }, 3000);
+
         const savedUser = localStorage.getItem('karlo_user');
         const savedPass = localStorage.getItem('karlo_pass');
         
-        // جلب الخلفية المحفوظة فوراً
         onSnapshot(doc(db, "settings", "appearance"), (d) => {
             if(d.exists() && d.data().bg) {
                 document.getElementById('dynamic-bg').style.backgroundImage = `url(${d.data().bg})`;
                 document.querySelector('.video-background').style.opacity = "0.1";
             }
-        });
+        }); 
 
         if(savedUser && savedPass && savedUser.trim() !== "") {
             document.getElementById('loginUser').value = savedUser;
@@ -627,7 +723,7 @@
                 document.getElementById('userBalance').innerText = b.toFixed(2);
                 document.getElementById('headerBalance').innerText = b.toFixed(2);
             }
-        });
+        }); 
 
         const q = query(collection(db, "orders"), where("user", "==", u));
         onSnapshot(q, s => {
@@ -651,9 +747,8 @@
                 else { if(cList) cList.innerHTML += html; }
             });
         });
-    }
+    } 
 
-    // رفع وتغيير الخلفية
     window.uploadBg = (input) => {
         const file = input.files[0];
         if(!file) return;
@@ -668,19 +763,16 @@
                 canvas.width = 1080; 
                 canvas.height = 1920; 
                 const ctx = canvas.getContext('2d');
-                
                 const ratio = Math.max(canvas.width / img.width, canvas.height / img.height);
                 const x = (canvas.width - img.width * ratio) / 2;
                 const y = (canvas.height - img.height * ratio) / 2;
-                
                 ctx.drawImage(img, x, y, img.width * ratio, img.height * ratio);
                 const base64 = canvas.toDataURL('image/jpeg', 0.7);
-                
                 await setDoc(doc(db, "settings", "appearance"), { bg: base64 }, { merge: true });
                 alert("تم تحديث خلفية المتجر بنجاح! 🎉");
             };
         };
-    };
+    }; 
 
     onSnapshot(collection(db, "items"), snap => {
         items = []; 
@@ -692,7 +784,6 @@
             const i = {id:d.id, ...d.data()}; 
             items.push(i);
             if(i.type==='game') sC.add(i.game); else aC.add(i.game);
-            
             if(mng) mng.innerHTML += `
             <div class="admin-item-row">
                 <span>${i.name} (${i.price} د.ل)</span>
@@ -704,7 +795,7 @@
         });
         renderCats('shipCatsGrid', Array.from(sC), 'ship'); 
         renderCats('accCatsGrid', Array.from(aC), 'acc');
-    });
+    }); 
 
     onSnapshot(collection(db, "orders"), s => {
         const cur = document.getElementById('adminOrders'), don = document.getElementById('doneOrders');
@@ -725,15 +816,14 @@
             if(o.status==='pending') { if(cur) cur.innerHTML += h; } 
             else { if(don) don.innerHTML += h; }
         });
-    });
+    }); 
 
     window.delOrder = async id => { if(confirm("حذف الطلب نهائياً؟")) await deleteDoc(doc(db,"orders",id)); };
     window.appOrd = async id => { await updateDoc(doc(db,"orders",id),{status:'done'}); };
-    
     window.editItemPrompt = async (id, oldP) => {
         const newP = prompt("السعر الجديد:", oldP);
         if(newP) await updateDoc(doc(db, "items", id), { price: parseFloat(newP) });
-    };
+    }; 
 
     window.reqDeposit = (m, t) => {
         const mod = document.getElementById('kModal'); 
@@ -743,34 +833,23 @@
         document.getElementById('mInputContainer').innerHTML = `
             <input type="number" id="dA" class="k-input" placeholder="المبلغ المراد شحنه">
             <input type="text" id="dP" class="k-input" placeholder="رقم الهاتف الذي حولت منه">`;
-        
         document.getElementById('mBtn').onclick = async () => {
             const a = parseFloat(document.getElementById('dA').value); 
             const p = document.getElementById('dP').value;
             if(!a || !p) return alert("يرجى ملء كافة الخانات!");
-            
-            await addDoc(collection(db, "deposits"), { 
-                user:currentUser, 
-                amount:a, 
-                from:p, 
-                method:m, 
-                status:'pending', 
-                time:serverTimestamp() 
-            });
+            await addDoc(collection(db, "deposits"), { user:currentUser, amount:a, from:p, method:m, status:'pending', time:serverTimestamp() });
             closeKModal(); 
             alert("تم إرسال طلب الشحن، سيتم التأكد من التحويل قريباً!");
         };
-    };
+    }; 
 
     window.startFlow = async (g, n, p) => {
         const uD = await getDoc(doc(db, "users", currentUser)); 
         const bal = uD.data().balance;
         const mod = document.getElementById('kModal'); 
         mod.style.display='flex';
-        
         document.getElementById('mTitle').innerText = "تأكيد عملية الشراء";
         document.getElementById('mDesc').innerText = `المنتج: ${n}\nالسعر: ${p} د.ل\nرصيدك الحالي: ${bal} د.ل`;
-        
         if(bal < p) {
             document.getElementById('mDesc').innerHTML += `<br><b style="color:red">عذراً، رصيدك غير كافٍ!</b>`;
             document.getElementById('mBtn').style.display='none';
@@ -779,29 +858,19 @@
             document.getElementById('mBtn').onclick = async () => {
                 const id = document.getElementById('pID').value; 
                 if(!id) return alert("يرجى إدخال الـ ID!");
-                
                 await updateDoc(doc(db, "users", currentUser), { balance: bal - p });
-                await addDoc(collection(db, "orders"), { 
-                    user:currentUser, 
-                    game:g, 
-                    name:n, 
-                    playerID:id, 
-                    price:p, 
-                    status:'pending', 
-                    time:serverTimestamp() 
-                });
+                await addDoc(collection(db, "orders"), { user:currentUser, game:g, name:n, playerID:id, price:p, status:'pending', time:serverTimestamp() });
                 closeKModal(); 
                 alert("تم إرسال الطلب بنجاح، جاري الشحن!");
             };
         }
-    };
+    }; 
 
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); 
         if(b) b.innerHTML="";
         const badge = document.getElementById('depBadge'); 
         if(badge) badge.style.display = s.size > 0 ? 'inline' : 'none';
-        
         s.forEach(d => { 
             const o = d.data(); 
             if(b) b.innerHTML += `
@@ -813,16 +882,15 @@
                     </div>
                 </div>`; 
         });
-    });
+    }); 
 
     window.appDep = async (id,u,a) => {
         const r = doc(db,"users",u); 
         const s = await getDoc(r);
         await updateDoc(r, { balance: (s.data().balance||0)+a }); 
         await updateDoc(doc(db,"deposits",id),{status:'done'});
-    };
-
-    window.rejDep = async (id) => { if(confirm("رفض الطلب؟")) await deleteDoc(doc(db, "deposits", id)); };
+    }; 
+    window.rejDep = async (id) => { if(confirm("رفض الطلب؟")) await deleteDoc(doc(db, "deposits", id)); }; 
 
     window.upload = async (t) => {
         const s = t==='game'?'1':'2';
@@ -830,22 +898,14 @@
         const n = document.getElementById('n'+s).value;
         const p = document.getElementById('p'+s).value;
         const i = document.getElementById('i'+s).files[0];
-        
         if(!g || !n || !p || !i) return alert("يرجى إكمال كافة البيانات!");
-        
         const r = new FileReader(); 
         r.readAsDataURL(i);
         r.onload = async () => { 
-            await addDoc(collection(db, "items"), { 
-                game:g, 
-                name:n, 
-                price:parseFloat(p), 
-                type:t, 
-                img:r.result 
-            }); 
+            await addDoc(collection(db, "items"), { game:g, name:n, price:parseFloat(p), type:t, img:r.result }); 
             alert("تم نشر المنتج بنجاح!"); 
         };
-    };
+    }; 
 
     window.delItem = async id => { if(confirm("حذف المنتج؟")) await deleteDoc(doc(db,"items",id)); }; 
 
@@ -856,7 +916,7 @@
         cats.forEach(c => { 
             g.innerHTML += `<div class="admin-box" style="padding:15px; background:rgba(0,40,100,0.5)" onclick="openG('${c}','${m}')">${c}</div>`; 
         });
-    }
+    } 
 
     window.openG = (g, m) => {
         document.getElementById(m+'-cats').style.display="none"; 
@@ -875,29 +935,25 @@
                     <button class="btn-k btn-next" onclick="${act}">طلب</button>
                 </div>`;
         });
-    };
+    }; 
 
     window.contactWhatsApp = (n, p) => { 
         window.open(`https://wa.me/+218934551020?text=أريد شراء الحساب: ${n} بسعر ${p} د.ل`, '_blank'); 
-    };
-
+    }; 
     window.back = (m) => { 
         document.getElementById(m+'-items').style.display="none"; 
         document.getElementById(m+'-cats').style.display="block"; 
-    };
-
+    }; 
     window.closeKModal = () => { 
         document.getElementById('kModal').style.display = 'none'; 
         document.getElementById('mBtn').style.display='block'; 
-    };
-
+    }; 
     window.toggleF = (id) => { 
         const f = document.getElementById(id); 
         const isV = f.style.display === 'block'; 
         document.querySelectorAll('.form-container').forEach(el => el.style.display = 'none'); 
         f.style.display = isV ? 'none' : 'block'; 
-    };
-
+    }; 
     window.enterAdmin = () => { 
         if(prompt("أدخل رمز الدخول السري:") === 'KARL-STORE-2026-ULTRA99') { 
             document.getElementById('main-content').style.display='none'; 
