@@ -20,7 +20,7 @@
             background-color: #000; 
             color: white; 
             overflow-x: hidden; 
-        }
+        } 
 
         /* --- شاشة التحميل (القطة/اللوجو) --- */
         #loader-wrapper {
@@ -33,16 +33,15 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.5s ease;
-        }
+        } 
 
         .loader-cat {
             width: 120px;
             height: 120px;
             position: relative;
             margin-bottom: 20px;
-        }
+        } 
 
-        /* تصميم القطة المتحركة بالـ CSS */
         .cat-head {
             width: 80px; height: 60px;
             background: var(--primary);
@@ -67,12 +66,12 @@
             animation: blink 2s infinite;
         }
         .eye.left { left: 20px; }
-        .eye.right { right: 20px; }
+        .eye.right { right: 20px; } 
 
         @keyframes blink {
             0%, 90%, 100% { transform: scaleY(1); }
             95% { transform: scaleY(0.1); }
-        }
+        } 
 
         .loading-bar {
             width: 200px;
@@ -88,15 +87,14 @@
             background: var(--primary);
             box-shadow: 0 0 10px var(--primary);
             animation: loadProgress 3s forwards;
-        }
+        } 
 
         @keyframes loadProgress {
             0% { width: 0%; }
             50% { width: 70%; }
             100% { width: 100%; }
-        }
+        } 
 
-        /* ستايل لودر الزر */
         .btn-spinner {
             display: none;
             width: 18px;
@@ -107,18 +105,15 @@
             animation: spin 0.8s linear infinite;
             margin-right: 10px;
             vertical-align: middle;
-        }
+        } 
 
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
+        } 
 
         .loading .btn-spinner { display: inline-block; }
-        .loading .btn-text { display: none; }
+        .loading .btn-text { display: none; } 
 
-        /* ---------------------------------- */
-        
-        /* طبقة الخلفية الديناميكية */
         #dynamic-bg { 
             position: fixed; 
             inset: 0; 
@@ -150,7 +145,6 @@
             z-index: -1; 
         } 
 
-        /* الهيدر وزر الخروج */
         #top-bar { 
             display: none; 
             position: fixed; 
@@ -203,7 +197,6 @@
             100% { transform: scale(1); } 
         } 
 
-        /* واجهة الدخول */
         #auth-screen { 
             position: fixed; 
             inset: 0; 
@@ -333,7 +326,6 @@
             z-index: 5; 
         } 
 
-        /* لوحة التحكم */
         .admin-dashboard { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -501,7 +493,7 @@
         <div class="loading-progress"></div>
     </div>
     <p style="margin-top: 15px; color: var(--primary); font-weight: bold; letter-spacing: 1px;">KARLO STORE IS LOADING...</p>
-</div>
+</div> 
 
 <div id="dynamic-bg"></div>
 <video autoplay loop muted playsinline class="video-background">
@@ -680,7 +672,7 @@
             const loader = document.getElementById('loader-wrapper');
             loader.style.opacity = '0';
             setTimeout(() => loader.style.display = 'none', 500);
-        }, 3000);
+        }, 3000); 
 
         const savedUser = localStorage.getItem('karlo_user');
         const savedPass = localStorage.getItem('karlo_pass');
@@ -706,9 +698,8 @@
         
         if(u.length < 6 || p.length < 6) {
             return alert("6 رموز على الأقل لاسم المستخدم وكلمة المرور!");
-        }
+        } 
 
-        // تفعيل وضع التحميل
         btn.classList.add('loading');
         btn.disabled = true;
         
@@ -751,7 +742,6 @@
 
     function loginOk(u){
         currentUser = u; 
-        // انتقال لحظي
         document.getElementById('auth-screen').style.display='none'; 
         document.getElementById('main-content').style.display='block';
         document.getElementById('top-bar').style.display='flex';
@@ -905,6 +895,7 @@
         }
     }; 
 
+    // --- تحديث قسم موافقات المحفظة (التعديل المطلوب هنا) ---
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); 
         if(b) b.innerHTML="";
@@ -913,9 +904,14 @@
         s.forEach(d => { 
             const o = d.data(); 
             if(b) b.innerHTML += `
-                <div class="admin-item-row">
-                    <span>${o.user} (${o.amount} د.ل) - ${o.method}</span>
-                    <div class="admin-btn-group">
+                <div class="admin-item-row" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+                    <div style="font-size:12px; line-height:1.5;">
+                        👤 <b>اليوزر:</b> ${o.user}<br>
+                        💰 <b>القيمة:</b> ${o.amount} د.ل<br>
+                        📱 <b>الرقم المحول منه:</b> ${o.from}<br>
+                        🏦 <b>الطريقة:</b> ${o.method}
+                    </div>
+                    <div class="admin-btn-group" style="width:100%; justify-content: flex-end;">
                         <button class="small-btn" style="background:var(--success); color:white" onclick="appDep('${d.id}','${o.user}',${o.amount})">موافقة</button>
                         <button class="small-btn" style="background:var(--danger); color:white" onclick="rejDep('${d.id}')">رفض</button>
                     </div>
