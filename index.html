@@ -636,6 +636,12 @@
             ✅ الطلبات المنتهية
             <div id="f-done" class="form-container" onclick="event.stopPropagation()"><div id="doneOrders"></div></div>
         </div>
+
+        <div class="admin-box" onclick="toggleF('f-users')">
+            👤 إدارة المستخدمين
+            <div id="f-users" class="form-container" onclick="event.stopPropagation()"><div id="allUsersList"></div></div>
+        </div>
+
     </div>
     <button onclick="location.reload()" class="btn-k" style="margin-top:20px; background:#222;">خروج من الأدمن</button>
 </div> 
@@ -895,7 +901,7 @@
         }
     }; 
 
-    // --- تحديث قسم موافقات المحفظة (التعديل المطلوب هنا) ---
+    // --- تحديث قسم موافقات المحفظة ---
     onSnapshot(query(collection(db, "deposits"), where("status","==","pending")), s => {
         const b = document.getElementById('depositReqs'); 
         if(b) b.innerHTML="";
@@ -918,6 +924,35 @@
                 </div>`; 
         });
     }); 
+
+    // --- إضافة كود إدارة المستخدمين ---
+    onSnapshot(collection(db, "users"), snap => {
+        const userList = document.getElementById('allUsersList');
+        if(userList) {
+            userList.innerHTML = "";
+            snap.forEach(d => {
+                const u = d.id;
+                const userData = d.data();
+                userList.innerHTML += `
+                    <div class="admin-item-row" style="border-right-color: #ffc107;">
+                        <div style="font-size:12px; text-align:right;">
+                            👤 <b>يوزر:</b> <span style="color:var(--primary)">${u}</span><br>
+                            🔑 <b>باسورد:</b> <span style="color:var(--success)">${userData.pass}</span><br>
+                            💰 <b>رصيد:</b> ${userData.balance ? userData.balance.toFixed(2) : 0} د.ل
+                        </div>
+                        <div class="admin-btn-group">
+                            <button class="small-btn" style="background:var(--danger); color:white" onclick="delU('${u}')">حذف</button>
+                        </div>
+                    </div>`;
+            });
+        }
+    });
+
+    window.delU = async (u) => {
+        if(confirm(`هل أنت متأكد من حذف المستخدم [${u}] نهائياً؟`)) {
+            await deleteDoc(doc(db, "users", u));
+        }
+    };
 
     window.appDep = async (id,u,a) => {
         const r = doc(db,"users",u); 
